@@ -180,9 +180,9 @@ class Cert_5_7_03_CoapDiagCommands_Base(thread_cert.TestCase):
         #             TLV Type 5 – Route64
         #             TLV Type 16 – Child Table
         _qr_pkt = pkts.filter_wpan_src64(LEADER).\
-            filter_ipv6_dst(REALM_LOCAL_All_THREAD_NODES_MULTICAST_ADDRESS).\
-            filter_coap_request(DIAG_GET_QRY_URI).\
-            must_next()
+                filter_ipv6_dst(REALM_LOCAL_All_THREAD_NODES_MULTICAST_ADDRESS).\
+                filter_coap_request(DIAG_GET_QRY_URI).\
+                must_next()
         dut_payload_tlvs = {
             DG_TYPE_LIST_TLV, DG_MAC_EXTENDED_ADDRESS_TLV, DG_MAC_ADDRESS_TLV, DG_MODE_TLV, DG_LEADER_DATA_TLV,
             DG_NETWORK_DATA_TLV, DG_IPV6_ADDRESS_LIST_TLV, DG_CHANNEL_PAGES_TLV
@@ -205,25 +205,25 @@ class Cert_5_7_03_CoapDiagCommands_Base(thread_cert.TestCase):
             #             TLV Type 17 – Channel Pages
             dut_payload_tlvs.remove(DG_TYPE_LIST_TLV)
             pkts.filter_wpan_src64(DUT).\
-                filter_ipv6_dst(LEADER_RLOC).\
-                filter_coap_request(DIAG_GET_ANS_URI).\
-                filter(lambda p:
+                    filter_ipv6_dst(LEADER_RLOC).\
+                    filter_coap_request(DIAG_GET_ANS_URI).\
+                    filter(lambda p:
                        dut_payload_tlvs == set(p.thread_diagnostic.tlv.type) and\
-                       {str(p.wpan.src64), colon_hex(dut_addr16, 2), '0f'}
+                           {str(p.wpan.src64), colon_hex(dut_addr16, 2), '0f'}
                        < set(p.thread_diagnostic.tlv.general)
                       ).\
-                must_next()
+                    must_next()
 
             # Step 4: The DUT MUST use IEEE 802.15.4 indirect transmissions to forward
             #         the DIAG_GET.query to SED
             dut_payload_tlvs.add(DG_TYPE_LIST_TLV)
             pkts.filter_wpan_src64(DUT).\
-                filter_ipv6_dst(REALM_LOCAL_All_THREAD_NODES_MULTICAST_ADDRESS).\
-                filter_coap_request(DIAG_GET_QRY_URI).\
-                filter(lambda p:
+                    filter_ipv6_dst(REALM_LOCAL_All_THREAD_NODES_MULTICAST_ADDRESS).\
+                    filter_coap_request(DIAG_GET_QRY_URI).\
+                    filter(lambda p:
                        dut_payload_tlvs == set(p.thread_diagnostic.tlv.type)
                       ).\
-                must_next()
+                    must_next()
 
         else:
             # Step 5: The DUT automatically responds with a DIAG_GET.ans response
@@ -237,14 +237,14 @@ class Cert_5_7_03_CoapDiagCommands_Base(thread_cert.TestCase):
             #             TLV Type 17 – Channel Pages
             dut_payload_tlvs.remove(DG_TYPE_LIST_TLV)
             pkts.filter_wpan_src64(DUT).\
-                filter_ipv6_dst(LEADER_RLOC).\
-                filter_coap_request(DIAG_GET_ANS_URI).\
-                filter(lambda p:
+                    filter_ipv6_dst(LEADER_RLOC).\
+                    filter_coap_request(DIAG_GET_ANS_URI).\
+                    filter(lambda p:
                        dut_payload_tlvs == set(p.thread_diagnostic.tlv.type) and\
-                       {str(p.wpan.src64), colon_hex(dut_addr16, 2), '0f'}
+                           {str(p.wpan.src64), colon_hex(dut_addr16, 2), '0f'}
                        < set(p.thread_diagnostic.tlv.general)
                       ).\
-                must_next()
+                    must_next()
 
 
 class Cert_5_7_03_CoapDiagCommands_Base_ROUTER(Cert_5_7_03_CoapDiagCommands_Base):

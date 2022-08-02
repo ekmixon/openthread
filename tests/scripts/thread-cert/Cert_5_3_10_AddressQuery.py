@@ -192,7 +192,7 @@ class Cert_5_3_10_AddressQuery(thread_cert.TestCase):
         GUA1 = {}
 
         for node in ('ROUTER_1', 'BR', 'MED'):
-            for addr in pv.vars['%s_IPADDRS' % node]:
+            for addr in pv.vars[f'{node}_IPADDRS']:
                 if addr.startswith(Bytes(GUA_1_START)):
                     GUA1[node] = addr
 
@@ -217,26 +217,26 @@ class Cert_5_3_10_AddressQuery(thread_cert.TestCase):
         #         Response and forward the ICMPv6 Echo Request packet to Router_1
 
         _pkt = pkts.filter_ping_request().\
-            filter_wpan_src64(MED).\
-            filter_ipv6_dst(GUA1['ROUTER_1']).\
-            must_next()
+                filter_wpan_src64(MED).\
+                filter_ipv6_dst(GUA1['ROUTER_1']).\
+                must_next()
         pkts.filter_wpan_src64(ROUTER_2).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            filter(lambda p: p.thread_address.tlv.target_eid == GUA1['ROUTER_1']).\
-            must_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                filter(lambda p: p.thread_address.tlv.target_eid == GUA1['ROUTER_1']).\
+                must_next()
         pkts.filter_ping_request(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_2).\
-            filter_ipv6_dst(GUA1['ROUTER_1']).\
-            must_next()
+                filter_wpan_src64(ROUTER_2).\
+                filter_ipv6_dst(GUA1['ROUTER_1']).\
+                must_next()
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_1).\
-            filter_ipv6_dst(GUA1['MED']).\
-            must_next()
+                filter_wpan_src64(ROUTER_1).\
+                filter_ipv6_dst(GUA1['MED']).\
+                must_next()
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_2).\
-            filter_wpan_dst16(MED_RLOC16).\
-            must_next()
+                filter_wpan_src64(ROUTER_2).\
+                filter_wpan_dst16(MED_RLOC16).\
+                must_next()
 
         # Step 4: Border Router sends an ICMPv6 Echo Request to MED using GUA 2003::
         #         addresss
@@ -252,29 +252,29 @@ class Cert_5_3_10_AddressQuery(thread_cert.TestCase):
         #         The IPv6 Destination address MUST be the RLOC of the destination
 
         pkts.filter_wpan_src64(BR).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            filter(lambda p: p.thread_address.tlv.target_eid == GUA1['MED']).\
-            must_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                filter(lambda p: p.thread_address.tlv.target_eid == GUA1['MED']).\
+                must_next()
         pkts.filter_ipv6_src_dst(ROUTER_2_RLOC, BR_RLOC).\
-            filter_coap_request(ADDR_NTF_URI, port=MM).\
-            filter(lambda p: {
+                filter_coap_request(ADDR_NTF_URI, port=MM).\
+                filter(lambda p: {
                                  NL_ML_EID_TLV,
                                  NL_RLOC16_TLV,
                                  NL_TARGET_EID_TLV
                              } <= set(p.coap.tlv.type) and\
-                             p.thread_address.tlv.target_eid == GUA1['MED'] and\
-                             p.thread_address.tlv.rloc16 == ROUTER_2_RLOC16
+                                 p.thread_address.tlv.target_eid == GUA1['MED'] and\
+                                 p.thread_address.tlv.rloc16 == ROUTER_2_RLOC16
                    ).\
-            must_next()
+                must_next()
         _pkt = pkts.filter_ping_request().\
-            filter_wpan_src64(BR).\
-            filter_ipv6_dst(GUA1['MED']).\
-            must_next()
+                filter_wpan_src64(BR).\
+                filter_ipv6_dst(GUA1['MED']).\
+                must_next()
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(MED).\
-            filter_ipv6_dst(GUA1['BR']).\
-            must_next()
+                filter_wpan_src64(MED).\
+                filter_ipv6_dst(GUA1['BR']).\
+                must_next()
 
         # Step 5: MED sends an ICMPv6 Echo Request to Router_1 using GUA 2003::
         #         address
@@ -283,23 +283,23 @@ class Cert_5_3_10_AddressQuery(thread_cert.TestCase):
         #         The DUT MUST forward the ICMPv6 Echo Reply to MED
 
         _pkt = pkts.filter_ping_request().\
-            filter_wpan_src64(MED).\
-            filter_ipv6_dst(GUA1['ROUTER_1']).\
-            must_next()
+                filter_wpan_src64(MED).\
+                filter_ipv6_dst(GUA1['ROUTER_1']).\
+                must_next()
         lstart = pkts.index
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_1).\
-            filter_ipv6_dst(GUA1['MED']).\
-            must_next()
+                filter_wpan_src64(ROUTER_1).\
+                filter_ipv6_dst(GUA1['MED']).\
+                must_next()
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_2).\
-            filter_wpan_dst16(MED_RLOC16).\
-            must_next()
+                filter_wpan_src64(ROUTER_2).\
+                filter_wpan_dst16(MED_RLOC16).\
+                must_next()
         lend = pkts.index
         pkts.range(lstart, lend).filter_wpan_src64(ROUTER_2).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            must_not_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                must_not_next()
 
         # Step 6: MED sends an ICMPv6 Echo Request to Router_1 using GUA 2003::
         #         address
@@ -308,27 +308,27 @@ class Cert_5_3_10_AddressQuery(thread_cert.TestCase):
         #         The DUT MUST send an Address Query to discover Router_1’s RLOC address.
 
         pkts.filter_ping_request().\
-            filter_wpan_src64(MED).\
-            filter_ipv6_dst(GUA1['ROUTER_1']).\
-            must_next()
+                filter_wpan_src64(MED).\
+                filter_ipv6_dst(GUA1['ROUTER_1']).\
+                must_next()
         pkts.filter_wpan_src64(ROUTER_2).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            filter(lambda p: p.thread_address.tlv.target_eid == GUA1['ROUTER_1']).\
-            must_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                filter(lambda p: p.thread_address.tlv.target_eid == GUA1['ROUTER_1']).\
+                must_next()
 
         # Step 7: Border Router sends two ICMPv6 Echo Requests to MED using GUA 2003::
         #         address
         #         The DUT MUST NOT respond with an Address Notification message
 
         pkts.filter_wpan_src64(ROUTER_2).\
-            filter_ipv6_dst(BR_RLOC).\
-            filter_coap_request(ADDR_NTF_URI, port=MM).\
-            must_not_next()
+                filter_ipv6_dst(BR_RLOC).\
+                filter_coap_request(ADDR_NTF_URI, port=MM).\
+                must_not_next()
         pkts.filter_ping_request().\
-            filter_wpan_src64(BR).\
-            filter_ipv6_dst(GUA1['MED']).\
-            must_next()
+                filter_wpan_src64(BR).\
+                filter_ipv6_dst(GUA1['MED']).\
+                must_next()
 
 
 if __name__ == '__main__':

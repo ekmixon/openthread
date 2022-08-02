@@ -169,14 +169,14 @@ class Cert_5_1_07_MaxChildCount(thread_cert.TestCase):
 
         ipaddrs = self.nodes[SED1].get_addrs()
         for addr in ipaddrs:
-            if addr[0:4] != 'fe80' and 'ff:fe00' not in addr:
+            if addr[:4] != 'fe80' and 'ff:fe00' not in addr:
                 self.assertTrue(self.nodes[LEADER].ping(addr, size=1232))
                 break
 
         for i in range(3, 13):
             ipaddrs = self.nodes[i].get_addrs()
             for addr in ipaddrs:
-                if addr[0:4] != 'fe80' and 'ff:fe00' not in addr:
+                if addr[:4] != 'fe80' and 'ff:fe00' not in addr:
                     self.assertTrue(self.nodes[LEADER].ping(addr, size=106))
                     break
 

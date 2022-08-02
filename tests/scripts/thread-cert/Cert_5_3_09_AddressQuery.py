@@ -191,7 +191,7 @@ class Cert_5_3_09_AddressQuery(thread_cert.TestCase):
         GUA1 = {}
 
         for node in ('ROUTER_1', 'ROUTER_3', 'SED'):
-            for addr in pv.vars['%s_IPADDRS' % node]:
+            for addr in pv.vars[f'{node}_IPADDRS']:
                 if addr.startswith(Bytes(GUA_1_START)):
                     GUA1[node] = addr
 
@@ -215,22 +215,22 @@ class Cert_5_3_09_AddressQuery(thread_cert.TestCase):
         #         Response and forward the ICMPv6 Echo Reply packet to SED
 
         _pkt = pkts.filter_ping_request().\
-            filter_wpan_src64(SED).\
-            filter_ipv6_dst(GUA1['ROUTER_3']).\
-            must_next()
+                filter_wpan_src64(SED).\
+                filter_ipv6_dst(GUA1['ROUTER_3']).\
+                must_next()
         pkts.filter_wpan_src64(ROUTER_2).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            filter(lambda p: p.thread_address.tlv.target_eid == GUA1['ROUTER_3']).\
-            must_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                filter(lambda p: p.thread_address.tlv.target_eid == GUA1['ROUTER_3']).\
+                must_next()
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_3).\
-            filter_ipv6_dst(GUA1['SED']).\
-            must_next()
+                filter_wpan_src64(ROUTER_3).\
+                filter_ipv6_dst(GUA1['SED']).\
+                must_next()
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_2).\
-            filter_wpan_dst16(SED_RLOC16).\
-            must_next()
+                filter_wpan_src64(ROUTER_2).\
+                filter_wpan_dst16(SED_RLOC16).\
+                must_next()
 
         # Step 3: Router_1 sends an ICMPv6 Echo Request to SED using GUA 2001::
         #         addresss
@@ -246,29 +246,29 @@ class Cert_5_3_09_AddressQuery(thread_cert.TestCase):
         #         The IPv6 Destination address MUST be the RLOC of the destination
 
         pkts.filter_wpan_src64(ROUTER_1).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            filter(lambda p: p.thread_address.tlv.target_eid == GUA1['SED']).\
-            must_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                filter(lambda p: p.thread_address.tlv.target_eid == GUA1['SED']).\
+                must_next()
         pkts.filter_ipv6_src_dst(ROUTER_2_RLOC, ROUTER_1_RLOC).\
-            filter_coap_request(ADDR_NTF_URI, port=MM).\
-            filter(lambda p: {
+                filter_coap_request(ADDR_NTF_URI, port=MM).\
+                filter(lambda p: {
                                  NL_ML_EID_TLV,
                                  NL_RLOC16_TLV,
                                  NL_TARGET_EID_TLV
                              } <= set(p.coap.tlv.type) and\
-                             p.thread_address.tlv.target_eid == GUA1['SED'] and\
-                             p.thread_address.tlv.rloc16 == ROUTER_2_RLOC16
+                                 p.thread_address.tlv.target_eid == GUA1['SED'] and\
+                                 p.thread_address.tlv.rloc16 == ROUTER_2_RLOC16
                    ).\
-            must_next()
+                must_next()
         _pkt = pkts.filter_ping_request().\
-            filter_wpan_src64(ROUTER_1).\
-            filter_ipv6_dst(GUA1['SED']).\
-            must_next()
+                filter_wpan_src64(ROUTER_1).\
+                filter_ipv6_dst(GUA1['SED']).\
+                must_next()
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(SED).\
-            filter_ipv6_dst(GUA1['ROUTER_1']).\
-            must_next()
+                filter_wpan_src64(SED).\
+                filter_ipv6_dst(GUA1['ROUTER_1']).\
+                must_next()
 
         # Step 5: SED sends an ICMPv6 Echo Request to Router_3 using GUA 2001::
         #         address
@@ -277,23 +277,23 @@ class Cert_5_3_09_AddressQuery(thread_cert.TestCase):
         #         The DUT MUST forward the ICMPv6 Echo Reply to SED
 
         _pkt = pkts.filter_ping_request().\
-            filter_wpan_src64(SED).\
-            filter_ipv6_dst(GUA1['ROUTER_3']).\
-            must_next()
+                filter_wpan_src64(SED).\
+                filter_ipv6_dst(GUA1['ROUTER_3']).\
+                must_next()
         lstart = pkts.index
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_3).\
-            filter_ipv6_dst(GUA1['SED']).\
-            must_next()
+                filter_wpan_src64(ROUTER_3).\
+                filter_ipv6_dst(GUA1['SED']).\
+                must_next()
         pkts.filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            filter_wpan_src64(ROUTER_2).\
-            filter_wpan_dst16(SED_RLOC16).\
-            must_next()
+                filter_wpan_src64(ROUTER_2).\
+                filter_wpan_dst16(SED_RLOC16).\
+                must_next()
         lend = pkts.index
         pkts.range(lstart, lend).filter_wpan_src64(ROUTER_2).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            must_not_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                must_not_next()
 
         # Step 6: SED sends an ICMPv6 Echo Request to Router_3 using GUA 2001::
         #         address
@@ -301,27 +301,27 @@ class Cert_5_3_09_AddressQuery(thread_cert.TestCase):
         #         based on Router_3’s Router ID.
         #         The DUT MUST send an Address Query to discover Router_3’s RLOC address.
         pkts.filter_ping_request().\
-            filter_wpan_src64(SED).\
-            filter_ipv6_dst(GUA1['ROUTER_3']).\
-            must_next()
+                filter_wpan_src64(SED).\
+                filter_ipv6_dst(GUA1['ROUTER_3']).\
+                must_next()
         pkts.filter_wpan_src64(ROUTER_2).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            filter(lambda p: p.thread_address.tlv.target_eid == GUA1['ROUTER_3']).\
-            must_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                filter(lambda p: p.thread_address.tlv.target_eid == GUA1['ROUTER_3']).\
+                must_next()
 
         # Step 7: Router_1 sends two ICMPv6 Echo Requests to SED using GUA 2001::
         #         address
         #         The DUT MUST NOT respond with an Address Notification message
 
         pkts.filter_wpan_src64(ROUTER_2).\
-            filter_ipv6_dst(ROUTER_1_RLOC).\
-            filter_coap_request(ADDR_NTF_URI, port=MM).\
-            must_not_next()
+                filter_ipv6_dst(ROUTER_1_RLOC).\
+                filter_coap_request(ADDR_NTF_URI, port=MM).\
+                must_not_next()
         pkts.filter_ping_request().\
-            filter_wpan_src64(ROUTER_1).\
-            filter_ipv6_dst(GUA1['SED']).\
-            must_next()
+                filter_wpan_src64(ROUTER_1).\
+                filter_ipv6_dst(GUA1['SED']).\
+                must_next()
 
 
 if __name__ == '__main__':

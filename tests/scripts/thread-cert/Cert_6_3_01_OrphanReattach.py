@@ -97,7 +97,7 @@ class Cert_6_3_1_OrphanReattach(thread_cert.TestCase):
 
         # Step 2: Remove Router from the network
         # Step 3: The DUT MUST send three MLE Child Update Requests to its parent
-        for i in range(1, 3):
+        for _ in range(1, 3):
             _epkts.filter_mle_cmd(MLE_CHILD_UPDATE_REQUEST).filter_wpan_dst64(ROUTER).must_next().must_verify(
                 lambda p: {SOURCE_ADDRESS_TLV, LEADER_DATA_TLV, MODE_TLV} <= set(p.mle.tlv.type))
 

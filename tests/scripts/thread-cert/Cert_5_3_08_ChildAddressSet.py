@@ -156,8 +156,8 @@ class Cert_5_3_8_ChildAddressSet(thread_cert.TestCase):
         MED_1_MLEID = pv.vars['MED_1_MLEID']
         MED_2 = pv.vars['MED_2']
         MED_2_MLEID = pv.vars['MED_2_MLEID']
-        MED_1_GUA = list()
-        MED_2_GUA = list()
+        MED_1_GUA = []
+        MED_2_GUA = []
         MM = pv.vars['MM_PORT']
         names = locals()
 
@@ -165,7 +165,7 @@ class Cert_5_3_8_ChildAddressSet(thread_cert.TestCase):
             for addr in pv.vars['MED_%d_IPADDRS' % i]:
                 for j in range(1, 4):
                     if addr.startswith(Bytes('200%d' % j)):
-                        names['MED_' + str(i) + '_GUA'].append(addr)
+                        names[f'MED_{str(i)}_GUA'].append(addr)
 
         # Step 2: Leader is sending properly formatted MLE Advertisements.
         #         Advertisements MUST be sent with an IP hop limit of 255 to
@@ -176,30 +176,30 @@ class Cert_5_3_8_ChildAddressSet(thread_cert.TestCase):
         #             - Source Address TLV
 
         pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p: {
+                filter_LLANMA().\
+                filter_mle_cmd(MLE_ADVERTISEMENT).\
+                filter(lambda p: {
                               LEADER_DATA_TLV,
                               ROUTE64_TLV,
                               SOURCE_ADDRESS_TLV
                               } <= set(p.mle.tlv.type) and\
-                   p.ipv6.hlim == 255).\
-            must_next()
+                       p.ipv6.hlim == 255).\
+                must_next()
 
         # Step 3: Send a ICMPv6 Echo Request to the MED_2 ML-EID
         #         The DUT MUST NOT send an Address Query Request
         #         MED_2 MUST respond with an ICMPv6 Echo Reply
 
         _pkt = pkts.filter_ipv6_src_dst(MED_1_MLEID, MED_2_MLEID).\
-                    filter_ping_request().\
-                    must_next()
+                        filter_ping_request().\
+                        must_next()
         pkts.filter_wpan_src64(LEADER).\
-            filter_RLARMA().\
-            filter_coap_request(ADDR_QRY_URI, port=MM).\
-            must_not_next()
+                filter_RLARMA().\
+                filter_coap_request(ADDR_QRY_URI, port=MM).\
+                must_not_next()
         pkts.filter_ipv6_src_dst(MED_2_MLEID, MED_1_MLEID).\
-            filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            must_next()
+                filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
+                must_next()
 
         # Step 4-6: Send a ICMPv6 Echo Request to the MED_2 each GUA
         #           The DUT MUST NOT send an Address Query Request
@@ -207,15 +207,15 @@ class Cert_5_3_8_ChildAddressSet(thread_cert.TestCase):
 
         for med_1_addr, med_2_addr in zip(MED_1_GUA, MED_2_GUA):
             _pkt = pkts.filter_ipv6_src_dst(med_1_addr, med_2_addr).\
-                        filter_ping_request().\
-                        must_next()
+                            filter_ping_request().\
+                            must_next()
             pkts.filter_wpan_src64(LEADER).\
-                filter_RLARMA().\
-                filter_coap_request(ADDR_QRY_URI, port=MM).\
-                must_not_next()
+                    filter_RLARMA().\
+                    filter_coap_request(ADDR_QRY_URI, port=MM).\
+                    must_not_next()
             pkts.filter_ipv6_src_dst(med_2_addr, med_1_addr).\
-                filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-                must_next()
+                    filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
+                    must_next()
 
 
 if __name__ == '__main__':

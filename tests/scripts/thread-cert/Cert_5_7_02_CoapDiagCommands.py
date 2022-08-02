@@ -248,21 +248,21 @@ class Cert_5_7_02_CoapDiagCommands(thread_cert.TestCase):
         #             TLV Type 8 – IPv6 address list
         #             TLV Type 17 – Channel Pages
         pkts.filter_wpan_src64(LEADER).\
-            filter_ipv6_dst(DUT_RLOC).\
-            filter_coap_request(DIAG_GET_URI).\
-            filter(lambda p: dut_payload_tlvs == set(p.thread_diagnostic.tlv.type)).\
-            must_next()
+                filter_ipv6_dst(DUT_RLOC).\
+                filter_coap_request(DIAG_GET_URI).\
+                filter(lambda p: dut_payload_tlvs == set(p.thread_diagnostic.tlv.type)).\
+                must_next()
         dut_payload_tlvs.remove(DG_TYPE_LIST_TLV)
         dut_payload_tlvs.remove(DG_ROUTE64_TLV)
         pkts.filter_wpan_src64(DUT).\
-            filter_ipv6_dst(LEADER_RLOC).\
-            filter_coap_ack(DIAG_GET_URI).\
-            filter(lambda p:
+                filter_ipv6_dst(LEADER_RLOC).\
+                filter_coap_ack(DIAG_GET_URI).\
+                filter(lambda p:
                    dut_payload_tlvs <= set(p.thread_diagnostic.tlv.type) and\
-                   {str(p.wpan.src64), colon_hex(dut_addr16, 2), '0f'}
+                       {str(p.wpan.src64), colon_hex(dut_addr16, 2), '0f'}
                    < set(p.thread_diagnostic.tlv.general)
                   ).\
-            must_next()
+                must_next()
 
         # Step 3: Leader to send DIAG_GET.req to DUT’s RLOC.
         #         The DUT MUST respond with a DIAG_GET.rsp response containing
@@ -272,22 +272,22 @@ class Cert_5_7_02_CoapDiagCommands(thread_cert.TestCase):
         #         CoAP Payload
         #             TLV Type 9 - MAC Counters
         pkts.filter_wpan_src64(LEADER).\
-            filter_ipv6_dst(DUT_RLOC).\
-            filter_coap_request(DIAG_GET_URI).\
-            filter(lambda p: {
+                filter_ipv6_dst(DUT_RLOC).\
+                filter_coap_request(DIAG_GET_URI).\
+                filter(lambda p: {
                               DG_TYPE_LIST_TLV,
                               DG_MAC_COUNTERS_TLV
                               } == set(p.thread_diagnostic.tlv.type)
                    ).\
-            must_next()
+                must_next()
         pkts.filter_wpan_src64(DUT).\
-            filter_ipv6_dst(LEADER_RLOC).\
-            filter_coap_ack(DIAG_GET_URI).\
-            filter(lambda p: {
+                filter_ipv6_dst(LEADER_RLOC).\
+                filter_coap_ack(DIAG_GET_URI).\
+                filter(lambda p: {
                               DG_MAC_COUNTERS_TLV
                               } == set(p.thread_diagnostic.tlv.type)
                    ).\
-            must_next()
+                must_next()
 
         # Step 4: Leader to send DIAG_GET.req to DUT’s RLOC.
         #         The DUT MUST respond with a DIAG_GET.rsp response containing
@@ -298,19 +298,19 @@ class Cert_5_7_02_CoapDiagCommands(thread_cert.TestCase):
         #             TLV Type 3 - Timeout MUST be omitted from the response
         #             TLV Type 16 – Child Table TLV
         pkts.filter_wpan_src64(LEADER).\
-            filter_ipv6_dst(DUT_RLOC).\
-            filter_coap_request(DIAG_GET_URI).\
-            filter(lambda p: {
+                filter_ipv6_dst(DUT_RLOC).\
+                filter_coap_request(DIAG_GET_URI).\
+                filter(lambda p: {
                               DG_TYPE_LIST_TLV,
                               DG_TIMEOUT_TLV,
                               DG_CHILD_TABLE_TLV
                               } == set(p.thread_diagnostic.tlv.type)
                    ).\
-            must_next()
+                must_next()
         pkts.filter_wpan_src64(DUT).\
-            filter_ipv6_dst(LEADER_RLOC).\
-            filter_coap_ack(DIAG_GET_URI).\
-            must_next()
+                filter_ipv6_dst(LEADER_RLOC).\
+                filter_coap_ack(DIAG_GET_URI).\
+                must_next()
 
         # Step 5: Leader to send DIAG_GET.req to DUT’s RLOC.
         #         The DUT MUST respond with a DIAG_GET.rsp response containing
@@ -321,19 +321,19 @@ class Cert_5_7_02_CoapDiagCommands(thread_cert.TestCase):
         #             TLV Type 14 – Battery Level (optional)
         #             TLV Type 15 – Supply Voltage (optional)
         pkts.filter_wpan_src64(LEADER).\
-            filter_ipv6_dst(DUT_RLOC).\
-            filter_coap_request(DIAG_GET_URI).\
-            filter(lambda p: {
+                filter_ipv6_dst(DUT_RLOC).\
+                filter_coap_request(DIAG_GET_URI).\
+                filter(lambda p: {
                               DG_TYPE_LIST_TLV,
                               DG_BATTERY_LEVEL_TLV,
                               DG_SUPPLY_VOLTAGE_TLV
                               } == set(p.thread_diagnostic.tlv.type)
                    ).\
-            must_next()
+                must_next()
         pkts.filter_wpan_src64(DUT).\
-            filter_ipv6_dst(LEADER_RLOC).\
-            filter_coap_ack(DIAG_GET_URI).\
-            must_next()
+                filter_ipv6_dst(LEADER_RLOC).\
+                filter_coap_ack(DIAG_GET_URI).\
+                must_next()
 
         # Step 6: Leader to send DIAG_RST.req to DUT’s RLOC for the following diagnostic
         #         TLV type:
@@ -342,18 +342,18 @@ class Cert_5_7_02_CoapDiagCommands(thread_cert.TestCase):
         #         CoAP Response Code
         #             2.04 Changed
         pkts.filter_wpan_src64(LEADER).\
-            filter_ipv6_dst(DUT_RLOC).\
-            filter_coap_request(DIAG_RST_URI).\
-            filter(lambda p: {
+                filter_ipv6_dst(DUT_RLOC).\
+                filter_coap_request(DIAG_RST_URI).\
+                filter(lambda p: {
                               DG_TYPE_LIST_TLV,
                               DG_MAC_COUNTERS_TLV
                               } == set(p.thread_diagnostic.tlv.type)
                    ).\
-            must_next()
+                must_next()
         pkts.filter_wpan_src64(DUT).\
-            filter_ipv6_dst(LEADER_RLOC).\
-            filter_coap_ack(DIAG_RST_URI).\
-            must_next()
+                filter_ipv6_dst(LEADER_RLOC).\
+                filter_coap_ack(DIAG_RST_URI).\
+                must_next()
 
         # Step 7: Leader to send DIAG_GET.req to DUT’s RLOC.
         #         The DUT MUST respond with a DIAG_GET.rsp response containing
@@ -365,22 +365,22 @@ class Cert_5_7_02_CoapDiagCommands(thread_cert.TestCase):
         #         TLV Type 9 - MAC Counters MUST contain a list of MAC Counters
         #         with 0 value or less than value returned in step 3.
         pkts.filter_wpan_src64(LEADER).\
-            filter_ipv6_dst(DUT_RLOC).\
-            filter_coap_request(DIAG_GET_URI).\
-            filter(lambda p: {
+                filter_ipv6_dst(DUT_RLOC).\
+                filter_coap_request(DIAG_GET_URI).\
+                filter(lambda p: {
                               DG_TYPE_LIST_TLV,
                               DG_MAC_COUNTERS_TLV
                               } == set(p.thread_diagnostic.tlv.type)
                    ).\
-            must_next()
+                must_next()
         pkts.filter_wpan_src64(DUT).\
-            filter_ipv6_dst(LEADER_RLOC).\
-            filter_coap_ack(DIAG_GET_URI).\
-            filter(lambda p: {
+                filter_ipv6_dst(LEADER_RLOC).\
+                filter_coap_ack(DIAG_GET_URI).\
+                filter(lambda p: {
                               DG_MAC_COUNTERS_TLV
                               } == set(p.thread_diagnostic.tlv.type)
                    ).\
-            must_next()
+                must_next()
 
         # Step 8: Leader sends DIAG_GET.qry to the Realm-Local All-Thread-Nodes
         #         multicast address containing the requested diagnostic TLVs:
@@ -399,22 +399,22 @@ class Cert_5_7_02_CoapDiagCommands(thread_cert.TestCase):
         dut_payload_tlvs.add(DG_TYPE_LIST_TLV)
         dut_payload_tlvs.add(DG_ROUTE64_TLV)
         pkts.filter_wpan_src64(LEADER).\
-            filter_ipv6_dst(REALM_LOCAL_All_THREAD_NODES_MULTICAST_ADDRESS).\
-            filter_coap_request(DIAG_GET_QRY_URI).\
-            filter(lambda p: dut_payload_tlvs == set(p.thread_diagnostic.tlv.type)).\
-            must_next()
+                filter_ipv6_dst(REALM_LOCAL_All_THREAD_NODES_MULTICAST_ADDRESS).\
+                filter_coap_request(DIAG_GET_QRY_URI).\
+                filter(lambda p: dut_payload_tlvs == set(p.thread_diagnostic.tlv.type)).\
+                must_next()
 
         dut_payload_tlvs.remove(DG_TYPE_LIST_TLV)
         dut_payload_tlvs.remove(DG_ROUTE64_TLV)
         pkts.filter_wpan_src64(DUT).\
-            filter_ipv6_dst(LEADER_RLOC).\
-            filter_coap_request(DIAG_GET_ANS_URI).\
-            filter(lambda p:
+                filter_ipv6_dst(LEADER_RLOC).\
+                filter_coap_request(DIAG_GET_ANS_URI).\
+                filter(lambda p:
                    dut_payload_tlvs <= set(p.thread_diagnostic.tlv.type) and\
-                   {str(p.wpan.src64), colon_hex(dut_addr16, 2), '0f'}
+                       {str(p.wpan.src64), colon_hex(dut_addr16, 2), '0f'}
                    < set(p.thread_diagnostic.tlv.general)
                   ).\
-            must_next()
+                must_next()
 
 
 if __name__ == '__main__':

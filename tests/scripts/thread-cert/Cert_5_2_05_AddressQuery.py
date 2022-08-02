@@ -226,9 +226,9 @@ class Cert_5_2_5_AddressQuery(thread_cert.TestCase):
         flag2001 = 0
         flag2002 = 0
         for global_address in self.nodes[DUT_REED].get_ip6_address(config.ADDRESS_TYPE.GLOBAL):
-            if global_address[0:4] == '2001':
+            if global_address[:4] == '2001':
                 flag2001 += 1
-            elif global_address[0:4] == '2002':
+            elif global_address[:4] == '2002':
                 flag2002 += 1
             else:
                 raise "Error: Address is unexpected."
@@ -278,8 +278,8 @@ class Cert_5_2_5_AddressQuery(thread_cert.TestCase):
 
         pv.verify_attached('REED', 'ROUTER_1')
         pkts.filter_wpan_src64(REED).\
-            filter_coap_request(ADDR_SOL_URI).\
-            must_not_next()
+                filter_coap_request(ADDR_SOL_URI).\
+                must_not_next()
 
         # Step 6: MED sends an ICMPv6 Echo Request from MED to REED using ML-EID.
         #         The DUT MUST send a properly formatted Address Notification message:
@@ -294,20 +294,20 @@ class Cert_5_2_5_AddressQuery(thread_cert.TestCase):
         #         The DUT MUST send an ICMPv6 Echo Reply
 
         _pkt = pkts.filter_ipv6_src_dst(MED_MLEID, REED_MLEID).\
-                    filter_ping_request().\
-                    must_next()
+                        filter_ping_request().\
+                        must_next()
         pkts.filter_ipv6_src_dst(REED_RLOC, LEADER_RLOC).\
-            filter_coap_request(ADDR_NTF_URI, port=MM).\
-            filter(lambda p: {
+                filter_coap_request(ADDR_NTF_URI, port=MM).\
+                filter(lambda p: {
                               NL_TARGET_EID_TLV,
                               NL_RLOC16_TLV,
                               NL_ML_EID_TLV
                              } == set(p.thread_address.tlv.type)
                    ).\
-            must_next()
+                must_next()
         pkts.filter_ipv6_src_dst(REED_MLEID, MED_MLEID).\
-            filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            must_next()
+                filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
+                must_next()
 
         # Step 7: MED sends an ICMPv6 Echo Request from MED to REED using 2001::EID.
         #         The DUT MUST send a properly formatted Address Notification message:
@@ -322,20 +322,20 @@ class Cert_5_2_5_AddressQuery(thread_cert.TestCase):
         #         The DUT MUST send an ICMPv6 Echo Reply
 
         _pkt = pkts.filter_ipv6_src_dst(MED2001, REED2001).\
-                    filter_ping_request().\
-                    must_next()
+                        filter_ping_request().\
+                        must_next()
         pkts.filter_ipv6_src_dst(REED_RLOC, LEADER_RLOC).\
-            filter_coap_request(ADDR_NTF_URI, port=MM).\
-            filter(lambda p: {
+                filter_coap_request(ADDR_NTF_URI, port=MM).\
+                filter(lambda p: {
                               NL_TARGET_EID_TLV,
                               NL_RLOC16_TLV,
                               NL_ML_EID_TLV
                              } == set(p.thread_address.tlv.type)
                    ).\
-            must_next()
+                must_next()
         pkts.filter_ipv6_src_dst(REED2001, MED2001).\
-            filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            must_next()
+                filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
+                must_next()
 
         # Step 8: MED sends an ICMPv6 Echo Request from MED to REED using 2002::EID.
         #         The DUT MUST send a properly formatted Address Notification message:
@@ -350,20 +350,20 @@ class Cert_5_2_5_AddressQuery(thread_cert.TestCase):
         #         The DUT MUST send an ICMPv6 Echo Reply
 
         _pkt = pkts.filter_ipv6_src_dst(MED2002, REED2002).\
-                    filter_ping_request().\
-                    must_next()
+                        filter_ping_request().\
+                        must_next()
         pkts.filter_ipv6_src_dst(REED_RLOC, LEADER_RLOC).\
-            filter_coap_request(ADDR_NTF_URI, port=MM).\
-            filter(lambda p: {
+                filter_coap_request(ADDR_NTF_URI, port=MM).\
+                filter(lambda p: {
                               NL_TARGET_EID_TLV,
                               NL_RLOC16_TLV,
                               NL_ML_EID_TLV
                              } == set(p.thread_address.tlv.type)
                    ).\
-            must_next()
+                must_next()
         pkts.filter_ipv6_src_dst(REED2002, MED2002).\
-            filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
-            must_next()
+                filter_ping_reply(identifier=_pkt.icmpv6.echo.identifier).\
+                must_next()
 
 
 if __name__ == '__main__':

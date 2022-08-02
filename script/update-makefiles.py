@@ -40,12 +40,14 @@ import os
 
 def get_file_list(path, extension):
     """Get a sorted list of full file names (with path) in a given `path` folder having a given `extension`"""
-    return sorted([
-        "{}/{}".format(dir_path, file_name)[2:]
-        for dir_path, dir_names, file_names in os.walk(path)
-        for file_name in file_names
-        if file_name.endswith(extension)
-    ])
+    return sorted(
+        [
+            f"{dir_path}/{file_name}"[2:]
+            for dir_path, dir_names, file_names in os.walk(path)
+            for file_name in file_names
+            if file_name.endswith(extension)
+        ]
+    )
 
 
 def read_txt_file(file_name):
@@ -94,7 +96,7 @@ def update_build_file(file_name, start_string, end_string, new_list, search_stri
             new_lines.append(line)
 
     if state != STATE_DONE:
-        raise RuntimeError('failed to update build file: {}'.format(file_name))
+        raise RuntimeError(f'failed to update build file: {file_name}')
 
     if new_lines != lines:
         write_txt_file(file_name, new_lines)
@@ -122,30 +124,36 @@ include_platform_h_files = [name[8:] for name in include_h_files if name.startsw
 
 core_cmakelist_txt_file = "./src/core/CMakeLists.txt"
 
-formatted_list = ["    {}\n".format(file_name[9:]) for file_name in core_cpp_files]
+formatted_list = [f"    {file_name[9:]}\n" for file_name in core_cpp_files]
 update_build_file(core_cmakelist_txt_file, "set(COMMON_SOURCES\n", ")\n", formatted_list)
 
-print("Updated " + core_cmakelist_txt_file)
+print(f"Updated {core_cmakelist_txt_file}")
 
 #----------------------------------------------------------------------------------------------
 # Update Build.gn files
 
 core_build_gn_file = "./src/core/BUILD.gn"
 
-formatted_list = ["  \"{}\",\n".format(file_name[9:]) for file_name in core_hpp_cpp_files]
+formatted_list = [
+    f'  \"{file_name[9:]}\",\n' for file_name in core_hpp_cpp_files
+]
+
 update_build_file(core_build_gn_file, "openthread_core_files = [\n", "]\n", formatted_list)
 
-formatted_list = ["    \"{}\",\n".format(file_name[9:]) for file_name in core_h_files]
+formatted_list = [f'    \"{file_name[9:]}\",\n' for file_name in core_h_files]
 update_build_file(core_build_gn_file, "  public = [\n", "  ]\n", formatted_list)
 
-print("Updated " + core_build_gn_file)
+print(f"Updated {core_build_gn_file}")
 
 include_build_gn_file = "./include/openthread/BUILD.gn"
 
-formatted_list = ["    \"{}\",\n".format(file_name[19:]) for file_name in include_h_files]
+formatted_list = [
+    f'    \"{file_name[19:]}\",\n' for file_name in include_h_files
+]
+
 update_build_file(include_build_gn_file, "  public = [\n", "  ]\n", formatted_list)
 
-print("Updated " + include_build_gn_file)
+print(f"Updated {include_build_gn_file}")
 
 #----------------------------------------------------------------------------------------------
 # Update Android.mk file
@@ -157,7 +165,7 @@ start_string = "LOCAL_SRC_FILES                                                 
 end_string = "    src/lib/hdlc/hdlc.cpp"
 update_build_file(android_mk_file, start_string, end_string, formatted_list)
 
-print("Updated " + android_mk_file)
+print(f"Updated {android_mk_file}")
 
 #----------------------------------------------------------------------------------------------
 # Update Makefile.am files
@@ -174,7 +182,7 @@ start_string = "HEADERS_COMMON                                  = \\\n"
 end_string = "    $(NULL)\n"
 update_build_file(core_makefile_am_file, start_string, end_string, formatted_list)
 
-print("Updated " + core_makefile_am_file)
+print(f"Updated {core_makefile_am_file}")
 
 include_makefile_am_file = "./include/Makefile.am"
 
@@ -188,4 +196,4 @@ start_string = "ot_platform_headers                     = \\\n"
 end_string = "    $(NULL)\n"
 update_build_file(include_makefile_am_file, start_string, end_string, formatted_list)
 
-print("Updated " + include_makefile_am_file)
+print(f"Updated {include_makefile_am_file}")

@@ -80,7 +80,7 @@ class Cert_6_5_1_ChildResetReattach(thread_cert.TestCase):
 
         addrs = self.nodes[ED].get_addrs()
         for addr in addrs:
-            if addr[0:4] == 'fe80':
+            if addr[:4] == 'fe80':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
     def verify(self, pv):

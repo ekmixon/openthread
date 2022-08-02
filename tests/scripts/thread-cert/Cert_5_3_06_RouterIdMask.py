@@ -141,33 +141,33 @@ class Cert_5_3_6_RouterIdMask(thread_cert.TestCase):
         pv.verify_attached('ROUTER_1', 'LEADER')
         pv.verify_attached('ROUTER_2', 'ROUTER_1')
 
-        pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p:
-                   {1,2,1} == set(p.mle.tlv.route64.cost) and\
-                   {leader_rid, router_1_rid, router_2_rid} ==
-                   p.mle.tlv.route64.id_mask
-                   ).\
-            must_next()
+        pkts.filter_wpan_src64(LEADER).filter_LLANMA().filter_mle_cmd(
+            MLE_ADVERTISEMENT
+        ).filter(
+            lambda p: {2, 1} == set(p.mle.tlv.route64.cost)
+            and {leader_rid, router_1_rid, router_2_rid}
+            == p.mle.tlv.route64.id_mask
+        ).must_next()
+
 
         # Step 4: The DUT’s routing cost to Router_2 MUST count to infinity
         #         The DUT MUST remove Router_2 ID from its ID set
         #         Verify route data has settled
-        _pkt = pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p: {1,0,1} == set(p.mle.tlv.route64.cost)).\
-            must_next()
-        pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p:
-                   {1,1} == set(p.mle.tlv.route64.cost) and\
-                   {leader_rid, router_1_rid} ==
-                   p.mle.tlv.route64.id_mask
-                   ).\
-            must_next()
+        _pkt = (
+            pkts.filter_wpan_src64(LEADER)
+            .filter_LLANMA()
+            .filter_mle_cmd(MLE_ADVERTISEMENT)
+            .filter(lambda p: {0, 1} == set(p.mle.tlv.route64.cost))
+            .must_next()
+        )
+
+        pkts.filter_wpan_src64(LEADER).filter_LLANMA().filter_mle_cmd(
+            MLE_ADVERTISEMENT
+        ).filter(
+            lambda p: {1} == set(p.mle.tlv.route64.cost)
+            and {leader_rid, router_1_rid} == p.mle.tlv.route64.id_mask
+        ).must_next()
+
 
         # Step 5: Re-attach Router_2 to Router_1.
         #         The DUT MUST reset the MLE Advertisement trickle timer and
@@ -176,51 +176,49 @@ class Cert_5_3_6_RouterIdMask(thread_cert.TestCase):
         # check trickle timer between the successive advertisements
         with pkts.save_index():
             _pkt = pkts.filter_wpan_src64(LEADER).\
-                filter_LLANMA().\
-                filter_mle_cmd(MLE_ADVERTISEMENT).\
-                must_next()
+                    filter_LLANMA().\
+                    filter_mle_cmd(MLE_ADVERTISEMENT).\
+                    must_next()
             pkts.filter_wpan_src64(LEADER).\
-                filter_LLANMA().\
-                filter_mle_cmd(MLE_ADVERTISEMENT).\
-                filter(lambda p: p.sniff_timestamp - _pkt.sniff_timestamp <= 3).\
-                must_next()
+                    filter_LLANMA().\
+                    filter_mle_cmd(MLE_ADVERTISEMENT).\
+                    filter(lambda p: p.sniff_timestamp - _pkt.sniff_timestamp <= 3).\
+                    must_next()
         # check router cost before and after the re-attach
-        pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p: {1,0,1} == set(p.mle.tlv.route64.cost)).\
-            must_next()
-        pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p: {1,2,1} == set(p.mle.tlv.route64.cost) and\
-                   {leader_rid, router_1_rid, router_2_rid} ==
-                   p.mle.tlv.route64.id_mask
-                   ).\
-            must_next()
+        pkts.filter_wpan_src64(LEADER).filter_LLANMA().filter_mle_cmd(
+            MLE_ADVERTISEMENT
+        ).filter(lambda p: {0, 1} == set(p.mle.tlv.route64.cost)).must_next()
+
+        pkts.filter_wpan_src64(LEADER).filter_LLANMA().filter_mle_cmd(
+            MLE_ADVERTISEMENT
+        ).filter(
+            lambda p: {2, 1} == set(p.mle.tlv.route64.cost)
+            and {leader_rid, router_1_rid, router_2_rid}
+            == p.mle.tlv.route64.id_mask
+        ).must_next()
+
 
         # Step 6: The DUT’s routing cost to Router_1 MUST go directly to
         #         infinity as there is no multi-hop cost for Router_1
         #         The DUT MUST remove Router_1 & Router_2 IDs from its ID set
+        pkts.filter_wpan_src64(LEADER).filter_LLANMA().filter_mle_cmd(
+            MLE_ADVERTISEMENT
+        ).filter(lambda p: {0, 1} == set(p.mle.tlv.route64.cost)).must_next()
+
         pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p: {0, 0, 1} == set(p.mle.tlv.route64.cost)).\
-            must_next()
+                filter_LLANMA().\
+                filter_mle_cmd(MLE_ADVERTISEMENT).\
+                filter(lambda p: {0, 1} == set(p.mle.tlv.route64.cost)).\
+                must_next()
         pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p: {0, 1} == set(p.mle.tlv.route64.cost)).\
-            must_next()
-        pkts.filter_wpan_src64(LEADER).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p:
+                filter_LLANMA().\
+                filter_mle_cmd(MLE_ADVERTISEMENT).\
+                filter(lambda p:
                    [1] == p.mle.tlv.route64.cost and\
-                   {leader_rid} ==
+                       {leader_rid} ==
                    p.mle.tlv.route64.id_mask
                    ).\
-            must_next()
+                must_next()
 
 
 if __name__ == '__main__':

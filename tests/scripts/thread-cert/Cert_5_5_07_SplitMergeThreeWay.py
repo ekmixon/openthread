@@ -96,17 +96,17 @@ class Cert_5_5_7_SplitMergeThreeWay(thread_cert.TestCase):
 
         addrs = self.nodes[LEADER1].get_addrs()
         for addr in addrs:
-            if addr[0:4] != 'fe80':
+            if addr[:4] != 'fe80':
                 self.assertTrue(self.nodes[ROUTER1].ping(addr))
 
         addrs = self.nodes[ROUTER2].get_addrs()
         for addr in addrs:
-            if addr[0:4] != 'fe80':
+            if addr[:4] != 'fe80':
                 self.assertTrue(self.nodes[ROUTER1].ping(addr))
 
         addrs = self.nodes[ROUTER3].get_addrs()
         for addr in addrs:
-            if addr[0:4] != 'fe80':
+            if addr[:4] != 'fe80':
                 self.assertTrue(self.nodes[ROUTER1].ping(addr))
 
     def verify(self, pv):

@@ -194,13 +194,13 @@ class Cert_5_2_7_REEDSynchronization_Base(thread_cert.TestCase):
 
         pv.verify_attached('REED')
         pkts.filter_wpan_src64(REED).\
-            filter_coap_request(ADDR_SOL_URI).\
-            filter(lambda p: {
+                filter_coap_request(ADDR_SOL_URI).\
+                filter(lambda p: {
                               NL_MAC_EXTENDED_ADDRESS_TLV,
                               NL_STATUS_TLV
                               } == set(p.coap.tlv.type)
                   ).\
-            must_not_next()
+                must_not_next()
 
         # Step 3: REED sends a unicast Link Request message to at lease 3 Routers
         #
@@ -211,17 +211,17 @@ class Cert_5_2_7_REEDSynchronization_Base(thread_cert.TestCase):
         #             - Version TLV
 
         if self.DUT == DUT_REED:
-            for i in range(0, MLE_MIN_LINKS):
+            for _ in range(MLE_MIN_LINKS):
                 pkts.filter_wpan_src64(REED).\
-                    filter_mle_cmd(MLE_LINK_REQUEST).\
-                    filter(lambda p: {
+                        filter_mle_cmd(MLE_LINK_REQUEST).\
+                        filter(lambda p: {
                                       CHALLENGE_TLV,
                                       LEADER_DATA_TLV,
                                       SOURCE_ADDRESS_TLV,
                                       VERSION_TLV
                                       } <= set(p.mle.tlv.type)
                            ).\
-                    must_next()
+                        must_next()
 
         # Step 4: Router_1 sends Link Accept message
         #         The following TLVs MUST be present in the Link Accept message:
@@ -236,19 +236,19 @@ class Cert_5_2_7_REEDSynchronization_Base(thread_cert.TestCase):
 
         if self.DUT == DUT_ROUTER1:
             pkts.filter_wpan_dst64(REED).\
-                filter_wpan_src64(ROUTER_1).\
-                filter_mle_cmd(MLE_LINK_ACCEPT).\
-                filter(lambda p: {
+                    filter_wpan_src64(ROUTER_1).\
+                    filter_mle_cmd(MLE_LINK_ACCEPT).\
+                    filter(lambda p: {
                                   LINK_LAYER_FRAME_COUNTER_TLV,
                                   RESPONSE_TLV,
                                   SOURCE_ADDRESS_TLV,
                                   VERSION_TLV
                                    } <= set(p.mle.tlv.type)
                        ).\
-                must_next()
+                    must_next()
             pkts.filter_wpan_src64(REED).\
-                filter_mle_cmd(MLE_LINK_ACCEPT_AND_REQUEST).\
-                must_not_next()
+                    filter_mle_cmd(MLE_LINK_ACCEPT_AND_REQUEST).\
+                    must_not_next()
 
 
 class Cert_5_2_7_REEDSynchronization_REED(Cert_5_2_7_REEDSynchronization_Base):

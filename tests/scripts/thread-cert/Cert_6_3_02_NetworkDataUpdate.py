@@ -71,9 +71,9 @@ class Cert_6_3_2_NetworkDataUpdate(thread_cert.TestCase):
         self.simulator.go(5)
 
         addrs = self.nodes[ED].get_addrs()
-        self.assertTrue(any('2001:2:0:1' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:1' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:10] == '2001:2:0:1':
+            if addr[:10] == '2001:2:0:1':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
         self.nodes[LEADER].remove_allowlist(self.nodes[ED].get_addr64())
@@ -92,10 +92,10 @@ class Cert_6_3_2_NetworkDataUpdate(thread_cert.TestCase):
         self.simulator.go(10)
 
         addrs = self.nodes[ED].get_addrs()
-        self.assertTrue(any('2001:2:0:1' in addr[0:10] for addr in addrs))
-        self.assertTrue(any('2001:2:0:2' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:1' in addr[:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:2' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:10] == '2001:2:0:1' or addr[0:10] == '2001:2:0:2':
+            if addr[:10] in ['2001:2:0:1', '2001:2:0:2']:
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
     def verify(self, pv):

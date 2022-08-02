@@ -101,19 +101,19 @@ class Cert_5_6_6_NetworkDataExpiration(thread_cert.TestCase):
         self.simulator.go(10)
 
         addrs = self.nodes[ED1].get_addrs()
-        self.assertTrue(any('2001:2:0:1' in addr[0:10] for addr in addrs))
-        self.assertTrue(any('2001:2:0:2' in addr[0:10] for addr in addrs))
-        self.assertTrue(any('2001:2:0:3' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:1' in addr[:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:2' in addr[:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:3' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:3] == '200':
+            if addr[:3] == '200':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
         addrs = self.nodes[SED1].get_addrs()
-        self.assertTrue(any('2001:2:0:1' in addr[0:10] for addr in addrs))
-        self.assertFalse(any('2001:2:0:2' in addr[0:10] for addr in addrs))
-        self.assertTrue(any('2001:2:0:3' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:1' in addr[:10] for addr in addrs))
+        self.assertFalse(any('2001:2:0:2' in addr[:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:3' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:3] == '200':
+            if addr[:3] == '200':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
         self.nodes[ROUTER].remove_prefix('2001:2:0:3::/64')
@@ -121,19 +121,19 @@ class Cert_5_6_6_NetworkDataExpiration(thread_cert.TestCase):
         self.simulator.go(10)
 
         addrs = self.nodes[ED1].get_addrs()
-        self.assertTrue(any('2001:2:0:1' in addr[0:10] for addr in addrs))
-        self.assertTrue(any('2001:2:0:2' in addr[0:10] for addr in addrs))
-        self.assertFalse(any('2001:2:0:3' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:1' in addr[:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:2' in addr[:10] for addr in addrs))
+        self.assertFalse(any('2001:2:0:3' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:3] == '200':
+            if addr[:3] == '200':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
         addrs = self.nodes[SED1].get_addrs()
-        self.assertTrue(any('2001:2:0:1' in addr[0:10] for addr in addrs))
-        self.assertFalse(any('2001:2:0:2' in addr[0:10] for addr in addrs))
-        self.assertFalse(any('2001:2:0:3' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:1' in addr[:10] for addr in addrs))
+        self.assertFalse(any('2001:2:0:2' in addr[:10] for addr in addrs))
+        self.assertFalse(any('2001:2:0:3' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:3] == '200':
+            if addr[:3] == '200':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
         self.nodes[ROUTER].stop()
@@ -173,14 +173,30 @@ class Cert_5_6_6_NetworkDataExpiration(thread_cert.TestCase):
             lambda p: {SOURCE_ADDRESS_TLV, MODE_TLV, LEADER_DATA_TLV, ADDRESS_REGISTRATION_TLV} < set(p.mle.tlv.type))
 
         # Step 8: The DUT MUST send a unicast MLE Child Update Request to SED_1
-        _lpkts_sed.filter_wpan_dst64(SED).filter_mle_cmd(MLE_CHILD_UPDATE_REQUEST).must_next().must_verify(
-            lambda p: {SOURCE_ADDRESS_TLV, LEADER_DATA_TLV, NETWORK_DATA_TLV, ACTIVE_TIMESTAMP_TLV} == set(
-                p.mle.tlv.type) and {
-                    NWD_PREFIX_TLV, NWD_BORDER_ROUTER_TLV, NWD_6LOWPAN_ID_TLV, NWD_PREFIX_TLV, NWD_BORDER_ROUTER_TLV,
-                    NWD_6LOWPAN_ID_TLV
-                } == set(p.thread_nwd.tlv.type) and {
-                    Ipv6Addr('2001:2:0:1::'), Ipv6Addr('2001:2:0:3::')
-                } == set(p.thread_nwd.tlv.prefix) and {0xFFFE, 0xFFFE} == set(p.thread_nwd.tlv.border_router_16))
+        _lpkts_sed.filter_wpan_dst64(SED).filter_mle_cmd(
+            MLE_CHILD_UPDATE_REQUEST
+        ).must_next().must_verify(
+            lambda p: {
+                SOURCE_ADDRESS_TLV,
+                LEADER_DATA_TLV,
+                NETWORK_DATA_TLV,
+                ACTIVE_TIMESTAMP_TLV,
+            }
+            == set(p.mle.tlv.type)
+            and {
+                NWD_PREFIX_TLV,
+                NWD_BORDER_ROUTER_TLV,
+                NWD_6LOWPAN_ID_TLV,
+                NWD_PREFIX_TLV,
+                NWD_BORDER_ROUTER_TLV,
+                NWD_6LOWPAN_ID_TLV,
+            }
+            == set(p.thread_nwd.tlv.type)
+            and {Ipv6Addr('2001:2:0:1::'), Ipv6Addr('2001:2:0:3::')}
+            == set(p.thread_nwd.tlv.prefix)
+            and {0xFFFE} == set(p.thread_nwd.tlv.border_router_16)
+        )
+
 
         # Step 10: The DUT MUST send a unicast MLE Child Update Response to SED_1
         _pkt = _lpkts_sed.filter_mle_cmd(MLE_CHILD_UPDATE_RESPONSE).filter_wpan_dst64(SED).must_next()

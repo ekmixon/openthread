@@ -100,19 +100,19 @@ class Cert_5_6_5_NetworkDataRegisterAfterAttachRouter(thread_cert.TestCase):
         self.simulator.go(10)
 
         addrs = self.nodes[ED1].get_addrs()
-        self.assertTrue(any('2001:2:0:1' in addr[0:10] for addr in addrs))
-        self.assertTrue(any('2001:2:0:2' in addr[0:10] for addr in addrs))
-        self.assertTrue(any('2001:2:0:3' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:1' in addr[:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:2' in addr[:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:3' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:3] == '200':
+            if addr[:3] == '200':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
         addrs = self.nodes[SED1].get_addrs()
-        self.assertTrue(any('2001:2:0:1' in addr[0:10] for addr in addrs))
-        self.assertFalse(any('2001:2:0:2' in addr[0:10] for addr in addrs))
-        self.assertTrue(any('2001:2:0:3' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:1' in addr[:10] for addr in addrs))
+        self.assertFalse(any('2001:2:0:2' in addr[:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:3' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:3] == '200':
+            if addr[:3] == '200':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
     def verify(self, pv):

@@ -153,12 +153,29 @@ class Cert_5_6_9_NetworkDataForwarding(thread_cert.TestCase):
 
         # Step 5: The DUT MUST send a unicast MLE Child Update
         # Request to SED_1
-        _rpkts.filter_mle_cmd(MLE_CHILD_UPDATE_REQUEST).filter_wpan_dst64(SED).must_next(
-        ).must_verify(lambda p: {SOURCE_ADDRESS_TLV, LEADER_DATA_TLV, NETWORK_DATA_TLV, ACTIVE_TIMESTAMP_TLV} == set(
-            p.mle.tlv.type
-        ) and {NWD_PREFIX_TLV, NWD_BORDER_ROUTER_TLV, NWD_6LOWPAN_ID_TLV, NWD_PREFIX_TLV, NWD_HAS_ROUTER_TLV} == set(
-            p.thread_nwd.tlv.type) and {Ipv6Addr('2001:2:0:1::'), Ipv6Addr('2001:2:0:2::')} == set(
-                p.thread_nwd.tlv.prefix) and {0xFFFE, 0xFFFE} == set(p.thread_nwd.tlv.border_router_16))
+        _rpkts.filter_mle_cmd(MLE_CHILD_UPDATE_REQUEST).filter_wpan_dst64(
+            SED
+        ).must_next().must_verify(
+            lambda p: {
+                SOURCE_ADDRESS_TLV,
+                LEADER_DATA_TLV,
+                NETWORK_DATA_TLV,
+                ACTIVE_TIMESTAMP_TLV,
+            }
+            == set(p.mle.tlv.type)
+            and {
+                NWD_PREFIX_TLV,
+                NWD_BORDER_ROUTER_TLV,
+                NWD_6LOWPAN_ID_TLV,
+                NWD_PREFIX_TLV,
+                NWD_HAS_ROUTER_TLV,
+            }
+            == set(p.thread_nwd.tlv.type)
+            and {Ipv6Addr('2001:2:0:1::'), Ipv6Addr('2001:2:0:2::')}
+            == set(p.thread_nwd.tlv.prefix)
+            and {0xFFFE} == set(p.thread_nwd.tlv.border_router_16)
+        )
+
 
         # Step 6: The DUT MUST forward the SED_1 ICMPv6 Echo Request to Router_2
         # due to higher preference
@@ -186,12 +203,29 @@ class Cert_5_6_9_NetworkDataForwarding(thread_cert.TestCase):
                 .tlv.border_router.flag.o == [1, 1] and p.thread_nwd.tlv.stable == [0, 1, 1, 1, 1, 1])
 
         # Step 10: The DUT MUST send a unicast MLE Child Update Request to SED_1
-        _rpkts.filter_mle_cmd(MLE_CHILD_UPDATE_REQUEST).filter_wpan_dst64(SED).must_next(
-        ).must_verify(lambda p: {SOURCE_ADDRESS_TLV, LEADER_DATA_TLV, NETWORK_DATA_TLV, ACTIVE_TIMESTAMP_TLV} == set(
-            p.mle.tlv.type
-        ) and {NWD_PREFIX_TLV, NWD_BORDER_ROUTER_TLV, NWD_6LOWPAN_ID_TLV, NWD_PREFIX_TLV, NWD_HAS_ROUTER_TLV} == set(
-            p.thread_nwd.tlv.type) and {Ipv6Addr('2001:2:0:1::'), Ipv6Addr('2001:2:0:2::')} == set(
-                p.thread_nwd.tlv.prefix) and {0xFFFE, 0xFFFE} == set(p.thread_nwd.tlv.border_router_16))
+        _rpkts.filter_mle_cmd(MLE_CHILD_UPDATE_REQUEST).filter_wpan_dst64(
+            SED
+        ).must_next().must_verify(
+            lambda p: {
+                SOURCE_ADDRESS_TLV,
+                LEADER_DATA_TLV,
+                NETWORK_DATA_TLV,
+                ACTIVE_TIMESTAMP_TLV,
+            }
+            == set(p.mle.tlv.type)
+            and {
+                NWD_PREFIX_TLV,
+                NWD_BORDER_ROUTER_TLV,
+                NWD_6LOWPAN_ID_TLV,
+                NWD_PREFIX_TLV,
+                NWD_HAS_ROUTER_TLV,
+            }
+            == set(p.thread_nwd.tlv.type)
+            and {Ipv6Addr('2001:2:0:1::'), Ipv6Addr('2001:2:0:2::')}
+            == set(p.thread_nwd.tlv.prefix)
+            and {0xFFFE} == set(p.thread_nwd.tlv.border_router_16)
+        )
+
 
         # Step 11: The DUT MUST forward the SED_1 ICMPv6 Echo Request to Router_2
         # due to higher preference
@@ -209,12 +243,29 @@ class Cert_5_6_9_NetworkDataForwarding(thread_cert.TestCase):
                                                      Ipv6Addr('2001:2:0:2::')} == set(p.thread_nwd.tlv.prefix))
 
         # Step 14: The DUT MUST send a unicast MLE Child Update Request to SED_1
-        _rpkts.filter_mle_cmd(MLE_CHILD_UPDATE_REQUEST).filter_wpan_dst64(SED).must_next(
-        ).must_verify(lambda p: {SOURCE_ADDRESS_TLV, LEADER_DATA_TLV, NETWORK_DATA_TLV, ACTIVE_TIMESTAMP_TLV} == set(
-            p.mle.tlv.type
-        ) and {NWD_PREFIX_TLV, NWD_BORDER_ROUTER_TLV, NWD_6LOWPAN_ID_TLV, NWD_PREFIX_TLV, NWD_HAS_ROUTER_TLV} == set(
-            p.thread_nwd.tlv.type) and {Ipv6Addr('2001:2:0:1::'), Ipv6Addr('2001:2:0:2::')} == set(
-                p.thread_nwd.tlv.prefix) and {0xFFFE, 0xFFFE} == set(p.thread_nwd.tlv.border_router_16))
+        _rpkts.filter_mle_cmd(MLE_CHILD_UPDATE_REQUEST).filter_wpan_dst64(
+            SED
+        ).must_next().must_verify(
+            lambda p: {
+                SOURCE_ADDRESS_TLV,
+                LEADER_DATA_TLV,
+                NETWORK_DATA_TLV,
+                ACTIVE_TIMESTAMP_TLV,
+            }
+            == set(p.mle.tlv.type)
+            and {
+                NWD_PREFIX_TLV,
+                NWD_BORDER_ROUTER_TLV,
+                NWD_6LOWPAN_ID_TLV,
+                NWD_PREFIX_TLV,
+                NWD_HAS_ROUTER_TLV,
+            }
+            == set(p.thread_nwd.tlv.type)
+            and {Ipv6Addr('2001:2:0:1::'), Ipv6Addr('2001:2:0:2::')}
+            == set(p.thread_nwd.tlv.prefix)
+            and {0xFFFE} == set(p.thread_nwd.tlv.border_router_16)
+        )
+
 
         # Step 15: The DUT MUST forward the SED_1 ICMPv6 Echo Request to Router_2
         # due to higher preference

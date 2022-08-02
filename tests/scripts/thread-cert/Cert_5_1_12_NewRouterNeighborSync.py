@@ -115,27 +115,27 @@ class Cert_5_1_12_NewRouterSync(thread_cert.TestCase):
 
         pv.verify_attached('ROUTER_1')
         pkts.filter_wpan_src64(ROUTER_1).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p: {
+                filter_LLANMA().\
+                filter_mle_cmd(MLE_ADVERTISEMENT).\
+                filter(lambda p: {
                               LEADER_DATA_TLV,
                               ROUTE64_TLV,
                               SOURCE_ADDRESS_TLV
                               } == set(p.mle.tlv.type) and\
-                   p.ipv6.hlim == 255).\
-            must_next()
+                       p.ipv6.hlim == 255).\
+                must_next()
 
         pv.verify_attached('ROUTER_2')
         pkts.filter_wpan_src64(ROUTER_2).\
-            filter_LLANMA().\
-            filter_mle_cmd(MLE_ADVERTISEMENT).\
-            filter(lambda p: {
+                filter_LLANMA().\
+                filter_mle_cmd(MLE_ADVERTISEMENT).\
+                filter(lambda p: {
                               LEADER_DATA_TLV,
                               ROUTE64_TLV,
                               SOURCE_ADDRESS_TLV
                               } == set(p.mle.tlv.type) and\
-                   p.ipv6.hlim == 255).\
-            must_next()
+                       p.ipv6.hlim == 255).\
+                must_next()
 
         # Step 4: The DUT and Router_2 exchange unicast Link Request and unicast
         #         Link Accept messages OR Link Accept and Request messages.
@@ -166,29 +166,33 @@ class Cert_5_1_12_NewRouterSync(thread_cert.TestCase):
 
         lq_src = ROUTER_1
         lq_dst = ROUTER_2
-        _pkt = pkts.filter_mle_cmd(MLE_LINK_REQUEST).\
-                filter(lambda p: {
-                                  CHALLENGE_TLV,
-                                  LEADER_DATA_TLV,
-                                  SOURCE_ADDRESS_TLV,
-                                  VERSION_TLV,
-                                  TLV_REQUEST_TLV,
-                                  LINK_MARGIN_TLV
-                                  } <= set(p.mle.tlv.type) and\
-                       p.mle.tlv.link_margin is nullField and\
-                       (p.wpan.src64 == ROUTER_1 or\
-                        p.wpan.src64 == ROUTER_2)
-                       ).\
-                must_next()
+        _pkt = (
+            pkts.filter_mle_cmd(MLE_LINK_REQUEST)
+            .filter(
+                lambda p: {
+                    CHALLENGE_TLV,
+                    LEADER_DATA_TLV,
+                    SOURCE_ADDRESS_TLV,
+                    VERSION_TLV,
+                    TLV_REQUEST_TLV,
+                    LINK_MARGIN_TLV,
+                }
+                <= set(p.mle.tlv.type)
+                and p.mle.tlv.link_margin is nullField
+                and p.wpan.src64 in [ROUTER_1, ROUTER_2]
+            )
+            .must_next()
+        )
+
         if _pkt.wpan.src64 != ROUTER_1:
             _pkt.must_verify(lambda p: p.wpan.dst64 == ROUTER_1)
             lq_src = ROUTER_2
             lq_dst = ROUTER_1
 
         _pkt = pkts.filter_wpan_src64(lq_dst).\
-                filter_wpan_dst64(lq_src).\
-                filter_mle_cmd2(MLE_LINK_ACCEPT, MLE_LINK_ACCEPT_AND_REQUEST).\
-                filter(lambda p: {
+                    filter_wpan_dst64(lq_src).\
+                    filter_mle_cmd2(MLE_LINK_ACCEPT, MLE_LINK_ACCEPT_AND_REQUEST).\
+                    filter(lambda p: {
                                   LEADER_DATA_TLV,
                                   LINK_LAYER_FRAME_COUNTER_TLV,
                                   LINK_MARGIN_TLV,
@@ -196,9 +200,9 @@ class Cert_5_1_12_NewRouterSync(thread_cert.TestCase):
                                   SOURCE_ADDRESS_TLV,
                                   VERSION_TLV
                                   } <= set(p.mle.tlv.type) and\
-                       p.mle.tlv.link_margin is not nullField
+                           p.mle.tlv.link_margin is not nullField
                        ).\
-                       must_next()
+                           must_next()
         if _pkt.mle.cmd == MLE_LINK_ACCEPT_AND_REQUEST:
             _pkt.must_verify(lambda p: {CHALLENGE_TLV, TLV_REQUEST_TLV} <= set(p.mle.tlv.type))
 

@@ -149,9 +149,9 @@ class Cert_5_6_7_NetworkDataRequestREED(thread_cert.TestCase):
         self.simulator.go(600)
 
         addrs = self.nodes[REED1].get_addrs()
-        self.assertTrue(any('2001:2:0:3' in addr[0:10] for addr in addrs))
+        self.assertTrue(any('2001:2:0:3' in addr[:10] for addr in addrs))
         for addr in addrs:
-            if addr[0:10] == '2001:2:0:3':
+            if addr[:10] == '2001:2:0:3':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
     def verify(self, pv):

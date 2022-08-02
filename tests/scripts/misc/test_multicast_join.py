@@ -53,7 +53,7 @@ def main():
         time.sleep(2)
         maddrs = get_maddrs(if_name)
         print(maddrs)
-        if not any(addr == ip_address(group) for addr in maddrs):
+        if all(addr != ip_address(group) for addr in maddrs):
             return -1
 
         s.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_LEAVE_GROUP,

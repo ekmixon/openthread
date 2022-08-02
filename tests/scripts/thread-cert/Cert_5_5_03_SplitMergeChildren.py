@@ -125,7 +125,7 @@ class Cert_5_5_3_SplitMergeChildren(thread_cert.TestCase):
 
         addrs = self.nodes[ED3].get_addrs()
         for addr in addrs:
-            if addr[0:4] != 'fe80':
+            if addr[:4] != 'fe80':
                 self.assertTrue(self.nodes[ED2].ping(addr))
 
     def verify(self, pv):

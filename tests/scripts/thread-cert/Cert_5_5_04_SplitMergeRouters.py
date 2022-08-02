@@ -108,7 +108,7 @@ class Cert_5_5_4_SplitMergeRouters(thread_cert.TestCase):
         self.collect_ipaddrs()
         addrs = self.nodes[ROUTER4].get_addrs()
         for addr in addrs:
-            if addr[0:4] != 'fe80':
+            if addr[:4] != 'fe80':
                 self.assertTrue(self.nodes[ROUTER3].ping(addr))
 
     def verify(self, pv):

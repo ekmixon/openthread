@@ -65,7 +65,7 @@ class Cert_5_8_2_KeyIncrement(thread_cert.TestCase):
         self.collect_ipaddrs()
         addrs = self.nodes[ROUTER].get_addrs()
         for addr in addrs:
-            if addr[0:4] != 'fe80':
+            if addr[:4] != 'fe80':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
         key_sequence_counter = self.nodes[LEADER].get_key_sequence_counter()
@@ -73,7 +73,7 @@ class Cert_5_8_2_KeyIncrement(thread_cert.TestCase):
 
         addrs = self.nodes[ROUTER].get_addrs()
         for addr in addrs:
-            if addr[0:4] != 'fe80':
+            if addr[:4] != 'fe80':
                 self.assertTrue(self.nodes[LEADER].ping(addr))
 
     def verify(self, pv):

@@ -164,8 +164,7 @@ class Cert_7_1_7_BorderRouterAsLeader(thread_cert.TestCase):
         self.collect_rloc16s()
 
         # ping Leader's PREFIX_1 and PREFIX_2 addrs
-        dut_addrs = []
-        dut_addrs.append(self.nodes[LEADER].get_addr(PREFIX_1))
+        dut_addrs = [self.nodes[LEADER].get_addr(PREFIX_1)]
         dut_addrs.append(self.nodes[LEADER].get_addr(PREFIX_2))
         for addr in dut_addrs:
             self.assertTrue(self.nodes[ROUTER_1].ping(addr))
